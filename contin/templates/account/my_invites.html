@@ -1,0 +1,30 @@
+{% extends 'base.html' %} {% load static %}
+{% block content %}
+<h1>My Invites</h1>
+{% if is_empty %}
+<h3>No invitation</h3>
+{% endif%}
+{% for obj in qs %}
+<h1>{{obj.user}}</h1>
+<p>
+    {{obj.bio}}
+</p>
+
+<a href="">
+  <button>
+    See Profile
+  </button>
+</a>
+<br>
+<form action="{% url 'accept_invitation' %}" method="POST">
+    {% csrf_token %}
+    <input name="profile_pk" type="hidden" value={{obj.pk}}>
+    <button type="submit">Confirm </button>
+</form>
+<form action="{% url 'reject_invitation' %}" method="POST">
+    {% csrf_token %}
+    <input name="profile_pk" type="hidden" value={{obj.pk}}>
+    <button type="submit">Reject </button>
+</form>
+{% endfor %}
+{% endblock %}

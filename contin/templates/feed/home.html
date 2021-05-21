@@ -1,0 +1,36 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+
+
+<div class="container">
+    {% for post in posts %}
+    <div class="row">
+
+        <div class="col-md-8">
+
+            <div class="card listing-preview my-5">
+                <div class="card-body">
+                    <br><small class="text-muted">Posted on {{ post.date_posted }}</small>
+                    <br><br>
+                    <p class="card-text text-dark">{{post}}</p>
+                </div>
+
+
+                <br>
+
+                <div class="card-footer">
+                    <button class="btn btn-white mr-3 like" id="">
+
+                        <a href="" id="likebtn" style="color:red;"> Like</a> | 1
+
+                    </button>
+                    <a class="btn btn-outline-info" href="">Comments | 1</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+
+{% endblock %}

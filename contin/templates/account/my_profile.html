@@ -1,0 +1,25 @@
+{% extends 'base.html' %} {% load static %}
+{% block content %}
+<form action="{% url 'update_profile' %}">
+    <input type="submit" value="Edit Profile" />
+</form>
+<h1>Profile of {{profile.user}}</h1>
+<br>
+<h1>Friend List</h1>
+
+{% for friend in profile.friends.all %}
+{{friend}}
+
+<br>
+{% endfor %}
+
+<br>
+<h1>
+    Friends No :{{profile.friends.all.count}}
+</h1>
+<br>
+    {% if profile.image %}
+        <img  src="{{profile.image.url}}" alt="" height="400" width="200">
+    {% endif %}
+
+{% endblock %}

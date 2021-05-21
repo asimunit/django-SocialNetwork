@@ -1,0 +1,27 @@
+{% extends 'base.html' %} {% load static %}
+{% block content %}
+
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ConIn</title>
+</head>
+<body>
+<h2>ContIn</h2>
+    {% for message in messages %}
+   <h1>{{ message }} please login</h1>  </li>
+    {% endfor %}
+
+
+
+
+<h3>Login</h3>
+<form method="post">
+    {% csrf_token %} {{ form.as_p }}
+    <button type="submit">Login</button>
+</form>
+</body>
+</html>
+
+{% endblock %}

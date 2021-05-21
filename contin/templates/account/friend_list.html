@@ -1,0 +1,13 @@
+{% extends 'base.html' %} {% load static %}
+{% block content %}
+
+
+<h1>Friend List</h1>
+
+
+{% for user in friends %}
+
+<h3>{{user}}</h3>
+{% endfor %}
+
+{% endblock %}
