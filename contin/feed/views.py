@@ -1,16 +1,12 @@
-from django.shortcuts import get_object_or_404, render, redirect
-from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
-from django.urls import reverse, reverse_lazy
-from django.contrib import messages
-from django.core.paginator import Paginator
-from django.contrib.auth.models import User
-from .forms import PostForm
-from django.views.generic import ListView, UpdateView, DeleteView
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from .models import Post, Comments, Like
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_POST
-import json
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.shortcuts import get_object_or_404, render, redirect
+from django.urls import reverse_lazy
+from django.views.generic import ListView, UpdateView
+
+from .forms import PostForm
+from .models import Post
 
 
 class Home(ListView):
@@ -24,8 +20,6 @@ class Home(ListView):
 @login_required
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
-    user = request.user
-    is_liked = Like.objects.filter(user=user, post=post)
     context = {'post': post}
     return render(request, 'feed/post_detail.html', context)
 

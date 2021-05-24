@@ -16,8 +16,7 @@
         <div class="card-body">
             <div class="listing-heading text-center">
                 <h4 class="text-primary">{{profile.bio}}</h4>
-                <p>
-                    <i class="fas fa-map-marker text-secondary"></i>New Delhi,Delhi 11019</p>
+
             </div>
             <hr>
             <div class="row py-2 text-secondary">
@@ -29,7 +28,7 @@
 
 <hr style="height:3px;border-width:0;color:gray;background-color:gray">
 <h1 class="display-4">
-    Friends No :{{profile.friends.all.count}}
+    No. of Friends :{{profile.friends.all.count}}
 </h1>
 
 <hr style="height:3px;border-width:0;color:gray;background-color:gray">
@@ -47,6 +46,7 @@
             <div class="card listing-preview my-5">
                 <div class="card-body">
                     <br><small class="text-muted">Posted on {{ post.date_posted }}</small>
+
                     <br><br>
                     <p class="card-text text-dark">{{post}}</p>
                 </div>

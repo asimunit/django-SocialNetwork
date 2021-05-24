@@ -1,13 +1,12 @@
-from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView
-from django.utils.decorators import method_decorator
+from feed.models import Post
+
 from .forms import UserRegisterForm, ProfileUpdateForm
 from .models import Profile, Relationship
-from feed.models import Post
 
 # Create your views here.
 
@@ -19,7 +18,6 @@ def register(request):
         form = UserRegisterForm(request.POST)
         if form.is_valid():
             form.save()
-            username = form.cleaned_data.get('username')
             return redirect('home')
     else:
         form = UserRegisterForm()
