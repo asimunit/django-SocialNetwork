@@ -1,6 +1,6 @@
 {% extends 'base.html' %} {% load static %} {% block content %}
 
-
+{% if user.is_authenticated %}
 <div class="container">
     {% for post in posts %}
     <div class="row">
@@ -14,7 +14,7 @@
                     <p class="card-text text-dark">{{post}}</p>
                 </div>
 
-
+                <a href="{% url 'post-detail' post.id %}">Post Detail</a>
                 <br>
 
                 <div class="card-footer">
@@ -30,7 +30,47 @@
         </div>
     </div>
     {% endfor %}
-</div>
 
+</div>
+{% else %}
+<section class="py-5 text-white" id="showcase-inner">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-12">
+                <h1 class="display-4">About ContIN Social platform</h1>
+                <p class="lead">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sunt, pariatur!</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<section class="py-4" id="about">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <h2>Connect with people</h2>
+                <p class="lead">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sunt, pariatur!</p>
+                <img alt="" src="{% static 'img/about.jpg' %}">
+                <p class="mt-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis esse officia
+                    repudiandae ad saepe ex, amet neque quod accusamus rem quia magnam magni dolorum facilis ullam
+                    minima perferendis? Exercitationem at quaerat commodi id
+                    libero eveniet harum perferendis laborum molestias quia.</p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- Work -->
+<section class="bg-dark text-white text-center" id="work">
+    <h2 class="display-4">We will help you to find New Friends</h2>
+    <h4>Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem velit aperiam, unde aliquid at similique.Autem velit aperiam</h4>
+
+</section>
+
+
+{% endif %}
 
 {% endblock %}

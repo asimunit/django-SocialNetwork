@@ -7,6 +7,7 @@ from django.views.generic import ListView
 from django.utils.decorators import method_decorator
 from .forms import UserRegisterForm, ProfileUpdateForm
 from .models import Profile, Relationship
+from feed.models import Post
 
 # Create your views here.
 
@@ -28,7 +29,9 @@ def register(request):
 @login_required(login_url='/account/login/')
 def my_profile(request):
     profile = Profile.objects.get(user=request.user)
-    context = {'profile': profile}
+    user = profile.user
+    user_post = Post.objects.filter(user_name=user).order_by('-date_posted')
+    context = {'profile': profile, 'user_post': user_post}
     return render(request, 'account/my_profile.html', context)
 
 
@@ -55,6 +58,7 @@ def friend_list(request):
         'friends': friends
     }
     return render(request, "account/friend_list.html", context)
+
 
 @login_required(login_url='/account/login/')
 def invites_received_view(request):
@@ -103,16 +107,6 @@ def invites_profile_list_view(request):
         'qs': qs
     }
     return render(request, 'account/to_invite_list.html', context)
-
-
-def profile_list_view(request):
-    user = request.user
-    qs = Profile.objects.get_all_profiles(user)
-
-    context = {
-        'qs': qs
-    }
-    return render(request, 'account/profile_list.html', context)
 
 
 class ProfileListView(ListView):

@@ -1,0 +1,31 @@
+{% extends 'base.html' %} {% load static %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+          <div class="col-md-8">
+            <div class="card card-signin my-5">
+              <div class="card-body">
+
+                <a class="text-dark" href="{{ post.user_name.profile.get_absolute_url }}"><b>{{ post.user_name }}</b></a>
+                <br><small class="text-muted">Posted on {{ post.date_posted }}</small>
+                <br><br>
+                <p class="card-text text-dark">{{ post.description }}</p>
+              </div>
+
+              <div class="card-footer">
+
+                {% if post.user_name == user %}
+                <a class="btn btn-outline-info mr-3" href="{% url 'post-update' post.id %}">Update</a>
+                <a class="btn btn-outline-danger" href="{% url 'post-delete' post.id %}">Delete</a>
+                {% endif %}
+              </div>
+            </div>
+           </div>
+        </div>
+        <br>
+
+
+
+    </div>
+{% endblock %}
