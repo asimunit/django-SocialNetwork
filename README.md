@@ -1,4 +1,4 @@
-##Project
+Project
 Create a clone of social media in Django. The site should be interactive and smooth.
  
 Features:
