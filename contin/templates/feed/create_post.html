@@ -1,5 +1,16 @@
 {% extends 'base.html' %} {% load static %}
+
+
 {% block content %}
+   {% for message in messages %}
+
+                    <div class="alert alert-success">
+                        <a class="close" href="#" data-dismiss="alert">×</a>
+
+                        {{ message }}
+
+                    </div>
+            {% endfor %}
 <h1>Create New Post</h1>
 <form class="form-signin"  method="POST">
     {% csrf_token %} {{ form.as_p}}

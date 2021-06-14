@@ -6,7 +6,7 @@
         {% if profile.image %}
         <img alt="" class="card-img-top" src="{{profile.image.url}}">
         {% else %}
-        <img alt="" class="card-img-top" src="{% static 'img/logo.svg' %}">
+        <img alt="" class="card-img-top" src="">
         {% endif %}
         <div class="card-img-overlay">
             <h2>
@@ -20,7 +20,8 @@
             </div>
             <hr>
             <div class="row py-2 text-secondary">
-                <a class="btn btn-primary btn-block" href="{% url 'update_profile' %}">Edit Profile</a>
+                <a class="btn btn-primary btn-block"
+                   href="{% url 'update_profile' %}">Edit Profile</a>
             </div>
         </div>
     </div>
@@ -30,41 +31,63 @@
 <h1 class="display-4">
     No. of Friends :{{profile.friends.all.count}}
 </h1>
-
 <hr style="height:3px;border-width:0;color:gray;background-color:gray">
-
 <h1 class="display-4">Friend List</h1>
-{% for friend in profile.friends.all %}
-<h1 class="display-16">{{friend}}</h1>
+<!--{% for friend in profile.friends.all %}-->
+<!--<h2>{{friend}}</h2>-->
+<!--{% endfor %}-->
+{% for obj in profile.friends.all%}
+
+<h3>{{obj}}</h3>
+
+
+<div class="thirteen wide column">
+    <h3>{{ obj.user }}</h3>
+    <p>{{ obj.bio }}</p>
+
+    <form action="{% url 'user_profile' %}" method="POST">
+        {% csrf_token %}
+        <input name="profile_pk" type="hidden" value={{obj.pk}}>
+        <button class="ui basic positive button"> see profile</button>
+    </form>
+
+    <form action="{% url 'remove_friend' %}" method="POST">
+        {% csrf_token %}
+        <input name="profile_pk" type="hidden" value={{obj.pk}}>
+        <button class="ui negative basic button" type="submit"> Remove friend
+        </button>
+    </form>
+
+</div>
+
+
 {% endfor %}
+
 <hr style="height:3px;border-width:0;color:gray;background-color:gray">
 <h1 class="display-4">My Post</h1>
-{% for post in user_post %} <div class="row">
+{% for post in user_post %}
+<div class="row">
 
-        <div class="col-md-8">
+    <div class="col-md-8">
 
-            <div class="card listing-preview my-5">
-                <div class="card-body">
-                    <br><small class="text-muted">Posted on {{ post.date_posted }}</small>
+        <div class="card listing-preview my-5">
+            <div class="card-body">
+                <br><small class="text-muted">Posted on
+                {{ post.date_posted }}</small>
 
-                    <br><br>
-                    <p class="card-text text-dark">{{post}}</p>
-                </div>
-
-                <a href="{% url 'post-detail' post.id %}">Post Detail</a>
-                <br>
-
-                <div class="card-footer">
-                    <button class="btn btn-white mr-3 like" id="">
-
-                        <a href="" id="likebtn" style="color:red;"> Like</a> | 1
-
-                    </button>
-                    <a class="btn btn-outline-info" href="">Comments | 1</a>
-                </div>
-
+                <br><br>
+                <p class="card-text text-dark">{{post}}</p>
+                <a class="btn btn-outline-info mr-3"
+                   href="{% url 'post-detail' post.id %}">Post Detail</a>
             </div>
+
+
         </div>
     </div>
+</div>
+
+
 {% endfor %}
+
+
 {% endblock %}

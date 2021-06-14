@@ -8,21 +8,25 @@ from django.db.models import Q
 class ProfileManager(models.Manager):
 
     def get_all_profiles_to_invite(self, sender):
-        profiles = Profile.objects.all().exclude(user=sender)
-        profile = Profile.objects.get(user=sender)
-        qs = Relationship.objects.filter(Q(sender=profile) | Q(receiver=profile))
+        profiles = Profile.objects.select_related('user').prefetch_related(
+            'friends').exclude(user=sender)
+        profile = Profile.objects.select_related("user").get(sender)
+        qs = Relationship.objects.filter(
+            Q(sender=profile) | Q(receiver=profile)).select_related(
+            'sender__user', 'receiver__user')
 
         accepted = []
         for rel in qs:
             if rel.status == 'accepted':
                 accepted.append(rel.receiver)
                 accepted.append(rel.sender)
-        available = [profile for profile in profiles if profile not in accepted]
+        available = [profile for profile in profiles if
+                     profile not in accepted]
 
         return available
 
     def get_all_profiles(self, me):
-        profile = Profile.objects.all().exclude(user=me)
+        profile = Profile.objects.select_related('user').exclude(user=me)
         return profile
 
 
@@ -43,7 +47,7 @@ class Profile(models.Model):
     objects = ProfileManager()
 
     def __str__(self):
-        return str(self.user)
+        return str(self.user_id)
 
 
 STATUS_CHOICES = (
@@ -52,20 +56,14 @@ STATUS_CHOICES = (
 )
 
 
-class RelationshipManager(models.Manager):
-    def invitation_recieved(self, receiver):
-        qs = Relationship.objects.filter(receiver=receiver, status='send')
-        return qs
-
-
 class Relationship(models.Model):
-    sender = models.ForeignKey(Profile, related_name='sender', on_delete=models.CASCADE)
-    receiver = models.ForeignKey(Profile, related_name='receiver', on_delete=models.CASCADE)
+    sender = models.ForeignKey(Profile, related_name='senders',
+                               on_delete=models.CASCADE)
+    receiver = models.ForeignKey(Profile, related_name='receivers',
+                                 on_delete=models.CASCADE)
     status = models.CharField(max_length=8, choices=STATUS_CHOICES)
     update = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now=True)
 
-    objects = RelationshipManager()
-
     def __str__(self):
-        return f"{self.sender}-{self.receiver}-{self.status}"
+        return f"{self.sender_id}-{self.receiver_id}-{self.status}"

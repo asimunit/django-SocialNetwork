@@ -5,8 +5,17 @@
 <h1>No profiles to intract with</h1>
 {% endif %}
 
-
-{% for obj in object_list %}
+<form
+  class="form-inline my-2 my-lg-0 ml-5"
+  action="{% url 'search_users' %}"
+  method="get"
+>
+  <input name="q" type="text" placeholder="Search users.." />
+  <button class="btn btn-success my-2 my-sm-0 ml-4" type="submit">
+    Search
+  </button>
+</form>
+{% for obj in all_profile %}
 <div class="ui segment">
     <div class="ui grid">
         <div class="row">
@@ -18,8 +27,13 @@
         <div class="thirteen wide column">
             <h3>{{ obj.user }}</h3>
             <p>{{ obj.bio }}</p>
-            <button class="Ui primary button"> See profile</button>
-            <br>
+
+        <form action="{% url 'user_profile' %}"  method="POST">
+            {% csrf_token %}
+            <input name="profile_pk" type="hidden" value={{obj.pk}}>
+            <button class="ui basic positive button"> see profile</button>
+        </form>
+
         </div>
         {% if obj.user not in rel_receiver and obj.user not in rel_sender %}
         <form action="{% url 'send_invite' %}"  method="POST">

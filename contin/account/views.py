@@ -1,8 +1,8 @@
+from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic import ListView
 from feed.models import Post
 
 from .forms import UserRegisterForm, ProfileUpdateForm
@@ -18,6 +18,7 @@ def register(request):
         form = UserRegisterForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Registration successful Please Login')
             return redirect('home')
     else:
         form = UserRegisterForm()
@@ -26,9 +27,10 @@ def register(request):
 
 @login_required(login_url='/account/login/')
 def my_profile(request):
-    profile = Profile.objects.get(user=request.user)
-    user = profile.user
-    user_post = Post.objects.filter(user_name=user).order_by('-date_posted')
+    profile = Profile.objects.select_related("user").prefetch_related(
+        'friends').get(user=request.user)
+    user_post = Post.objects.select_related('user_name').filter(
+        user_name=request.user).order_by('-date_posted')
     context = {'profile': profile, 'user_post': user_post}
     return render(request, 'account/my_profile.html', context)
 
@@ -36,7 +38,8 @@ def my_profile(request):
 @login_required(login_url='/account/login/')
 def update_profile(request):
     if request.method == 'POST':
-        form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
+        form = ProfileUpdateForm(request.POST, request.FILES,
+                                 instance=request.user.profile)
         if form.is_valid():
             form.save()
             return redirect('my_profile')
@@ -50,8 +53,7 @@ def update_profile(request):
 
 @login_required(login_url='/account/login/')
 def friend_list(request):
-    friend = request.user.profile
-    friends = friend.friends.all()
+    friends = request.user.profile.friends.select_related('profile')
     context = {
         'friends': friends
     }
@@ -59,9 +61,11 @@ def friend_list(request):
 
 
 @login_required(login_url='/account/login/')
-def invites_received_view(request):
-    profile = Profile.objects.get(user=request.user)
-    qs = Relationship.objects.invitation_recieved(profile)
+def invites_received(request):
+    profile = Profile.objects.select_related("user").get(user=request.user)
+    qs = Relationship.objects.filter(receiver=profile,
+                                     status='send').select_related(
+        'sender__user', 'receiver__user')
     results = list(map(lambda x: x.sender, qs))
     is_empty = False
     if len(results) == 0:
@@ -73,6 +77,7 @@ def invites_received_view(request):
     return render(request, 'account/my_invites.html', context)
 
 
+@login_required(login_url='/account/login/')
 def accept_invitation(request):
     if request.method == "POST":
         pk = request.POST.get('profile_pk')
@@ -87,6 +92,7 @@ def accept_invitation(request):
     return redirect('my_invites_view')
 
 
+@login_required(login_url='/account/login/')
 def reject_invitation(request):
     if request.method == "POST":
         pk = request.POST.get('profile_pk')
@@ -97,69 +103,109 @@ def reject_invitation(request):
     return redirect('my_invites_view')
 
 
-def invites_profile_list_view(request):
-    user = request.user
-    qs = Profile.objects.get_all_profiles_to_invite(user)
+@login_required(login_url='/account/login/')
+def profile_list(request):
+    # import pdb;
+    # pdb.set_trace()
+    all_profile = Profile.objects.select_related('user').prefetch_related(
+        'friends').exclude(user=request.user)
+    profile = Profile.objects.select_related("user").get(user=request.user)
+    all_relations = Relationship.objects.filter(
+        Q(sender=profile) | Q(receiver=profile)).select_related(
+        'sender__user', 'receiver__user')
+    receivers = []
+    senders = []
+    for item in all_relations:
+        senders.append(item.sender.user)
+        receivers.append(item.receiver.user)
+
+    is_empty = False
+    if not all_profile:
+        is_empty = False
 
     context = {
-        'qs': qs
+        'all_profile': all_profile,
+        'rel_receiver': receivers,
+        'rel_sender': senders,
+        'is_empty': is_empty
     }
-    return render(request, 'account/to_invite_list.html', context)
+    return render(request, 'account/profile_list.html', context)
 
 
-class ProfileListView(ListView):
-    model = Profile
-    template_name = 'account/profile_list.html'
-    context_object_name = 'qs'
-
-    def get_queryset(self):
-        qs = Profile.objects.get_all_profiles(self.request.user)
-        return qs
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        # user = User.objects.get(username__iexact=self.request.user)
-        profile = Profile.objects.get(user=self.request.user)
-        rel_r = Relationship.objects.filter(sender=profile)
-        rel_s = Relationship.objects.filter(receiver=profile)
-        rel_receiver = []
-        rel_sender = []
-        for item in rel_r:
-            rel_receiver.append(item.receiver.user)
-        for item in rel_s:
-            rel_sender.append(item.sender.user)
-        context['rel_receiver'] = rel_receiver
-        context['rel_sender'] = rel_sender
-        context['is_empty'] = False
-
-        if len(self.get_queryset()) == 0:
-            context['is_empty'] = True
-        return context
-
-
+@login_required(login_url='/account/login/')
 def add_friend(request):
     if request.method == "POST":
         pk = request.POST.get('profile_pk')
         user = request.user
-        sender = Profile.objects.get(user=user)
+        # sender = Profile.objects.get(user=user)
         receiver = Profile.objects.get(pk=pk)
 
-        rel = Relationship.objects.create(sender=sender, receiver=receiver, status='send')
+        rel = Relationship.objects.create(sender=user.profile,
+                                          receiver=receiver, status='send')
 
         return redirect(request.META.get('HTTP_REFERER'))
     return redirect('my_profile')
 
 
+@login_required(login_url='/account/login/')
 def remove_friend(request):
     if request.method == "POST":
         pk = request.POST.get('profile_pk')
         user = request.user
-        sender = Profile.objects.get(user=user)
+        # sender = Profile.objects.get(user=user)
         receiver = Profile.objects.get(pk=pk)
 
         rel = Relationship.objects.get(
-            (Q(sender=sender) & Q(receiver=receiver)) | (Q(sender=receiver) & Q(receiver=sender)))
+            (Q(sender=user.profile) & Q(receiver=receiver)) | (
+                    Q(sender=receiver) & Q(receiver=user.profile)))
         rel.delete()
 
         return redirect(request.META.get('HTTP_REFERER'))
     return redirect('my_profile')
+
+
+@login_required(login_url='/account/login/')
+def search_users(request):
+    query = request.GET.get('q')
+    object_list = Profile.objects.select_related('user').prefetch_related(
+        'friends').exclude(user=request.user).filter(
+        user__username__icontains=query)
+    profile = Profile.objects.select_related("user").get(user=request.user)
+    all_relations = Relationship.objects.filter(
+        Q(sender=profile) | Q(receiver=profile)).select_related(
+        'sender__user', 'receiver__user')
+    receivers = []
+    senders = []
+    for item in all_relations:
+        senders.append(item.sender.user)
+        receivers.append(item.receiver.user)
+
+    is_empty = False
+    if not object_list:
+        is_empty = False
+
+    context = {
+        'all_profile': object_list,
+        'rel_receiver': receivers,
+        'rel_sender': senders,
+        'is_empty': is_empty
+    }
+    # context = {
+    #     'users': object_list
+    # }
+    return render(request, "account/search_users.html", context)
+
+
+@login_required(login_url='/account/login/')
+def user_profile(request):
+    if request.method == "POST":
+
+        pk = request.POST.get('profile_pk')
+        print(pk)
+        profile = Profile.objects.select_related("user").prefetch_related(
+            'friends').get(pk=pk)
+        user_post = Post.objects.select_related('user_name').filter(
+            user_name=profile.user).order_by('-date_posted')
+        context = {'profile': profile, 'user_post': user_post}
+        return render(request, 'account/user_profile.html', context)
+    return redirect(request.META.get('HTTP_REFERER'))

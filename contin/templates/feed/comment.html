@@ -1,0 +1,9 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+
+
+<h3>Sorry we cannot Post! Your post has been predicted in following categories </h3>
+{% for predicted in predicted_class %}
+
+<li>{{predicted}}</li>
+{% endfor %}
+{% endblock %}

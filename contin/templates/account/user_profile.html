@@ -1,0 +1,63 @@
+{% extends 'base.html' %} {% load static %}
+{% block content %}
+
+<div class="col-md-6 col-lg-4 mb-4">
+    <div class="card listing-preview">
+        {% if profile.image %}
+        <img alt="" class="card-img-top" src="{{profile.image.url}}">
+        {% else %}
+        <img alt="" class="card-img-top" src="">
+        {% endif %}
+        <div class="card-img-overlay">
+            <h2>
+                <span class="badge badge-secondary text-white">{{profile.user}}</span>
+            </h2>
+        </div>
+        <div class="card-body">
+            <div class="listing-heading text-center">
+                <h4 class="text-primary">{{profile.bio}}</h4>
+
+            </div>
+            <hr>
+        </div>
+    </div>
+</div>
+
+<hr style="height:3px;border-width:0;color:gray;background-color:gray">
+<h1 class="display-4">
+    No. of Friends :{{profile.friends.all.count}}
+</h1>
+<hr style="height:3px;border-width:0;color:gray;background-color:gray">
+<h1 class="display-4">Friend List</h1>
+{% for friend in profile.friends.all %}
+<h2>{{friend}}</h2>
+{% endfor %}
+
+
+<hr style="height:3px;border-width:0;color:gray;background-color:gray">
+<h1 class="display-4">My Post</h1>
+{% for post in user_post %}
+<div class="row">
+
+    <div class="col-md-8">
+
+        <div class="card listing-preview my-5">
+            <div class="card-body">
+                <br><small class="text-muted">Posted on {{ post.date_posted }}</small>
+
+                <br><br>
+                <p class="card-text text-dark">{{post}}</p>
+            </div>
+
+            <a href="{% url 'post-detail' post.id %}">Post Detail</a>
+            <br>
+
+
+
+        </div>
+    </div>
+</div>
+
+
+{% endfor %}
+{% endblock %}

@@ -3,7 +3,7 @@
 
 <h1>Upadate Profile</h1>
 
-<form class="form-signin" size  method="POST">
+<form   method="POST" enctype='multipart/form-data'>
     {% csrf_token %} {{ form.as_p }}
     <button type="submit">Submit</button>
 </form>

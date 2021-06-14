@@ -1,7 +1,20 @@
 {% extends 'base.html' %} {% load static %} {% block content %}
+{% for message in messages %}
+{% for message in messages %}
 
+<div class="alert alert-success">
+    <a class="close" data-dismiss="alert" href="#">×</a>
+
+    {{ message }}
+
+</div>
+{% endfor %}
+{% endfor %}
 {% if user.is_authenticated %}
 <div class="container">
+    {% if posts%}
+    <h1>My Post</h1>
+    {% endif %}
     {% for post in posts %}
     <div class="row">
 
@@ -9,69 +22,108 @@
 
             <div class="card listing-preview my-5">
                 <div class="card-body">
-                    <br><small class="text-muted">Posted on {{ post.date_posted }}</small>
-                    <br><small class="text-muted">Posted by {{ post.user_name }}</small>
+                    <br><small class="text-muted">Posted on:
+                    {{ post.date_posted }}</small>
+                    <br><small class="text-muted">Posted by:
+                    {{ post.user_name }}</small>
+
                     <br><br>
                     <p class="card-text text-dark">{{post}}</p>
+
+
+                    <a class="btn btn-outline-info mr-3"
+                       href="{% url 'post-detail' post.id %}">Post Detail</a>
                 </div>
 
-                <a href="{% url 'post-detail' post.id %}">Post Detail</a>
+
                 <br>
 
-                <div class="card-footer">
-                    <button class="btn btn-white mr-3 like" id="">
-
-                        <a href="" id="likebtn" style="color:red;"> Like</a> | 1
-
-                    </button>
-                    <a class="btn btn-outline-info" href="">Comments | 1</a>
-                </div>
 
             </div>
         </div>
     </div>
     {% endfor %}
 
-</div>
-{% else %}
-<section class="py-5 text-white" id="showcase-inner">
     <div class="container">
-        <div class="row text-center">
-            <div class="col-md-12">
-                <h1 class="display-4">About ContIN Social platform</h1>
-                <p class="lead">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sunt, pariatur!</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-
-
-<section class="py-4" id="about">
-    <div class="container">
+        {% if posts%}
+        <h1>My Post</h1>
+        {% endif %}
+        {% for post in similar_posts %}
         <div class="row">
+
             <div class="col-md-8">
-                <h2>Connect with people</h2>
-                <p class="lead">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sunt, pariatur!</p>
-                <img alt="" src="{% static 'img/about.jpg' %}">
-                <p class="mt-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis esse officia
-                    repudiandae ad saepe ex, amet neque quod accusamus rem quia magnam magni dolorum facilis ullam
-                    minima perferendis? Exercitationem at quaerat commodi id
-                    libero eveniet harum perferendis laborum molestias quia.</p>
+
+                <div class="card listing-preview my-5">
+                    <div class="card-body">
+                        <br><small class="text-muted">Posted on
+                        {{ post.date_posted }} </small>
+                        <br><small class="text-muted">Posted by
+                        {{ post.user }}</small>
+                        <br><br>
+                        <p class="card-text text-dark">{{post.duplicate}}</p>
+                        <p class="card-text text-dark">
+                        <h3>Similar to :</h3>{{post.post}}</p>
+
+                    </div>
+
+
+                    <br>
+
+
+                </div>
             </div>
-
         </div>
-    </div>
-</section>
 
-<!-- Work -->
-<section class="bg-dark text-white text-center" id="work">
-    <h2 class="display-4">We will help you to find New Friends</h2>
-    <h4>Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem velit aperiam, unde aliquid at similique.Autem velit aperiam</h4>
+        {% endfor %}
+        {% else %}
+        <section class="py-5 text-white" id="showcase-inner">
+            <div class="container">
+                <div class="row text-center">
+                    <div class="col-md-12">
+                        <h1 class="display-4">About ContIN Social platform</h1>
+                        <p class="lead">Lorem ipsum dolor sit, amet consectetur
+                            adipisicing elit. Sunt, pariatur!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-</section>
+
+        <section class="py-4" id="about">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h2>Connect with people</h2>
+                        <p class="lead">Lorem ipsum dolor sit, amet consectetur
+                            adipisicing elit. Sunt, pariatur!</p>
+                        <img alt="" src="{% static 'img/about.jpg' %}">
+                        <p class="mt-4">Lorem ipsum dolor sit amet consectetur
+                            adipisicing elit. Perspiciatis esse officia
+                            repudiandae ad saepe ex, amet neque quod accusamus
+                            rem quia magnam magni dolorum facilis ullam
+                            minima perferendis? Exercitationem at quaerat
+                            commodi id
+                            libero eveniet harum perferendis laborum molestias
+                            quia.</p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Work -->
+        <section class="bg-dark text-white text-center" id="work">
+            <h2 class="display-4">We will help you to find New Friends</h2>
+            <h4>Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem
+                velit aperiam, unde aliquid at
+                similique.Autem
+                velit aperiam</h4>
+
+        </section>
 
 
-{% endif %}
+        {% endif %}
+        {{friends}}
 
-{% endblock %}
+
+        {% endblock %}

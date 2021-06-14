@@ -1,12 +1,11 @@
 from django import forms
-from .models import Comments, Post
+from .models import Post
 
 
 class PostForm(forms.ModelForm):
-    description = forms.CharField(widget=forms.Textarea(attrs={'cols': 60, 'rows': 10}))
+    description = forms.CharField(
+        widget=forms.Textarea(attrs={'cols': 60, 'rows': 10}))
 
     class Meta:
         model = Post
         fields = ['description']
-
-

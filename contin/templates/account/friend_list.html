@@ -5,9 +5,31 @@
 <h1>Friend List</h1>
 
 
-{% for user in friends %}
+{% for obj in friends %}
 
-<h3>{{user}}</h3>
+<h3>{{obj}}</h3>
+
+
+<div class="thirteen wide column">
+    <h3>{{ obj.user }}</h3>
+    <p>{{ obj.bio }}</p>
+
+    <form action="{% url 'user_profile' %}" method="POST">
+        {% csrf_token %}
+        <input name="profile_pk" type="hidden" value={{obj.pk}}>
+        <button class="ui basic positive button"> see profile</button>
+    </form>
+
+    <form action="{% url 'remove_friend' %}" method="POST">
+        {% csrf_token %}
+        <input name="profile_pk" type="hidden" value={{obj.pk}}>
+        <button class="ui negative basic button" type="submit"> Remove friend
+        </button>
+    </form>
+
+</div>
+
+
 {% endfor %}
 
 {% endblock %}

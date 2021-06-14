@@ -1,0 +1,18 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<h3>Your post is similar to the Following Posts</h3>
+{% for post,percentage in similar_post_dict.items %}
+<li>{{ post.description }} : {{ percentage}}  % similar</li>
+
+<br>
+{% endfor %}
+<div class="card-footer">
+
+    <form action="{% url 'post-save' %}"  method="POST">
+        {% csrf_token %}
+    <input type="hidden" name="max_similarity" value={{ max_similarity }}>
+    <input type="hidden" name="post_data" value="{{ post_created }}">
+        <button class="ui basic positive button"> Save this Post</button>
+    </form>
+     <a class="btn btn-outline-info mr-3" href="{% url 'home' %}">Delete this Post</a>
+</div>
+{% endblock %}

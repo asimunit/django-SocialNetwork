@@ -18,7 +18,7 @@
                     <a class=" nav-link " href="{% url 'create_post' %}">Create Post</a>
                 </li>
                 <li {% if 'listings' in request.path %} class="nav-item active mr-3" {% else %}class="nav-item mr-3" {% endif %}>
-                    <a class="nav-link " href="{% url 'friend_list' %}">My Network</a>
+                    <a class="nav-link " href="{% url 'friend_list' %}">My Friends</a>
                 </li>
                  <li {% if 'listings' in request.path %} class="nav-item active mr-3" {% else %}class="nav-item mr-3" {% endif %}>
                     <a class="nav-link " href="{% url 'my_invites_view' %}">My Invites</a>
@@ -26,9 +26,7 @@
                 <li {% if 'listings' in request.path %} class="nav-item active mr-3" {% else %}class="nav-item mr-3" {% endif %}>
                     <a class="nav-link " href="{% url 'all_profile' %}">All profiles</a>
                 </li>
-                <li {% if 'listings' in request.path %} class="nav-item active mr-3" {% else %}class="nav-item mr-3" {% endif %}>
-                    <a class="nav-link " href="{% url 'friend_list' %}">Friends</a>
-                </li>
+
                 {% endif %}
             </ul>
 

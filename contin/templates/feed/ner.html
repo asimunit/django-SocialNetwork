@@ -1,0 +1,33 @@
+{% extends 'base.html' %} {% load static %}
+
+{% block content %}
+<head>
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <style>
+.label {
+  color: white;
+  padding: 8px;
+  font-family: Arial;
+}
+.organisation {background-color: #3467eb;}
+.name {background-color: #4ef542;}
+.location {background-color: #ff0000;}
+
+
+    </style>
+</head>
+
+
+<h1>Labels</h1>
+
+<span class="label organisation">Organisation</span>
+<span class="label name">Name</span>
+<span class="label location">Location</span>
+
+
+<br><br>
+
+<p>
+    {{ post_stanford_ner | safe}}
+</p>
+{% endblock %}

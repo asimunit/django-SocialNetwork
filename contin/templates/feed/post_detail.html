@@ -9,6 +9,9 @@
 
                 <a class="text-dark" href="{{ post.user_name.profile.get_absolute_url }}"><b>{{ post.user_name }}</b></a>
                 <br><small class="text-muted">Posted on {{ post.date_posted }}</small>
+                    <br><small class="text-muted">Names: {{ post.names }}</small>
+                    <br><small class="text-muted">Locations: {{ post.locations }}</small>
+                    <br><small class="text-muted">Organisations: {{ post.organisations }}</small>
                 <br><br>
                 <p class="card-text text-dark">{{ post.description }}</p>
               </div>
@@ -18,7 +21,12 @@
                 {% if post.user_name == user %}
                 <a class="btn btn-outline-info mr-3" href="{% url 'post-update' post.id %}">Update</a>
                 <a class="btn btn-outline-danger" href="{% url 'post-delete' post.id %}">Delete</a>
+                  <a class="btn btn-outline-danger" href="{% url 'name_entity_recognition_spacy' post.id %}">Spacy_NER</a>
+                  <a class="btn btn-outline-danger" href="{% url 'name_entity_recognition_stanford' post.id %}">Stanford_NER</a>
+                  <a class="btn btn-outline-danger" href="{% url 'name_entity_recognition_cmd' post.id %}">Stanford_CMD</a>
                 {% endif %}
+
+<!--    <input type="hidden" name="post_data" value="{{ post_created }}">-->
               </div>
             </div>
            </div>
